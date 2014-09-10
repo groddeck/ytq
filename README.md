@@ -24,6 +24,6 @@ To make sure it's running, browse to localhost:4567 from your machine, and you s
 
 Your machine has to be visible to other machines on a network to enqueue selections.
 
-From a browser, or with curl on the command line, make a request to <your-ip>:4567/play/<youtube_id> - where <youtube_id> is the part of a youtube video URL after the `?v=` parameter, e.g.: http://www.youtube.com/watch?v=asdf - "asdf" is the youtube_id.
+From a browser, or with curl on the command line, make a request to *your-ip*:4567/play/*youtube_id* - where *youtube_id* is the part of a youtube video URL after the `?v=` parameter, e.g.: http://www.youtube.com/watch?v=asdf - "asdf" is the youtube_id.
 
 The YouTube video will be downloaded, ripped to MP3, and played on the system audio output of the host machine running the YTQ server.
