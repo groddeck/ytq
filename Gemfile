@@ -3,3 +3,4 @@ ruby "1.9.3"
 
 gem 'sinatra'
 gem 'redis'
+gem 'resque'
