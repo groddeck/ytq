@@ -1,6 +1,6 @@
 #YTQ = YouTube Queue
 
-Turn your machine into a YouTube jukebox server
+Turn your mac into a YouTube jukebox server
 
 ## Requirements
 
@@ -8,7 +8,9 @@ You have to have youtube-dl installed on your machine `brew install youtube-dl`
 
 Install and have redis running `brew install redis` and follow instructions for running it as a service
 
-Also have ruby 1.9.3
+Verified with ruby 1.9.3, though other versions are probably ok
+
+Designed for and tested on Macbook. Modification to use on other systems is likely possible
 
 ## How To
 
@@ -24,9 +26,11 @@ This will start up your YouTube Queue Server on port 4567
 
 To make sure it's running, browse to localhost:4567 from your machine, and you should see it return a test message ("Hello, World!").
 
-#### Queue Consumer
+#### Queue Consumers
 
-In a separate terminal, create a consumer to process requests with `QUEUE=playlist rake resque:work`
+In a separate terminal, create a consumer to process downloading requests with `QUEUE=extract rake resque:work`
+
+In another terminal, create a consumer to process playing requests with `QUEUE=playlist rake resque:work`
 
 You can invoke `resque-web` to inspect the queue of audio to be played, check for errors and see other stats.
 
