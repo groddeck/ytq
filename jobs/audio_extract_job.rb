@@ -7,7 +7,7 @@ class AudioExtractJob
       `say Thanks for the selection, #{who}`
     end
 
-    puts `youtube-dl -x -t --audio-format 'mp3' -- '#{youtube_id}'`
+    puts `youtube-dl -x --id --audio-format 'mp3' --download-archive ytdl.arch -- '#{youtube_id}'`
     unless $?.success?
     	`say Error downloading video`
     end
