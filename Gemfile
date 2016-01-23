@@ -10,3 +10,7 @@ end
 gem 'sinatra'
 gem 'redis'
 gem 'resque'
+
+group :test do
+  gem 'rspec'
+end
