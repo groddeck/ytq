@@ -4,7 +4,7 @@ require 'json'
 require_relative 'jobs/audio_extract_job'
 
 get '/' do
-  'OK. The server is running an ready to take requests.'
+  'OK. The server is running and ready to take requests.'
 end
 
 get '/play/:yt_id' do
