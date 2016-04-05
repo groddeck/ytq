@@ -26,3 +26,9 @@ get '/search' do
   end
   response_text
 end
+
+get '/queue' do
+  (0...Resque.size('playlist')).map do |i|
+    "#{Resque.peek('playlist', i)['args']}"
+  end.join('<br>')
+end
