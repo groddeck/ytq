@@ -1,2 +1,5 @@
 *.mp3
 .rvmrc
+.ruby-version
+dump.rdb
+ytdl.arch
