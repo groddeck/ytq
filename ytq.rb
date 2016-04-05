@@ -27,6 +27,12 @@ get '/search' do
   response_text
 end
 
+get '/api/search' do
+  results_json = `youtube-dl ytsearch10:"#{params[:q]}" -s --dump-json`
+  results = results_json.split("\n")
+  "[#{results.join(',')}]"
+end
+
 get '/queue' do
   (0...Resque.size('playlist')).map do |i|
     "#{Resque.peek('playlist', i)['args']}"
