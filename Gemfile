@@ -11,6 +11,10 @@ gem 'sinatra'
 gem 'redis'
 gem 'resque'
 
+group :development do
+  gem 'foreman'
+end
+
 group :test do
   gem 'rspec'
 end
