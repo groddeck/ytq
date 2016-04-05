@@ -20,11 +20,11 @@ Designed for and tested on Macbook. Modification to use on other systems is like
 
 Clone this repo `git clone https://github.com/groddeck/ytq`
 
-From the cloned repo (`cd ytq`) first `bundle install` and then run `ruby ytq.rb -o 0.0.0.0`
+From the cloned repo (`cd ytq`) first `bundle install` and then run `foreman start`
 
-This will start up your YouTube Queue Server on port 4567
+This will start up your YouTube Queue Server on port 5300
 
-To make sure it's running, browse to localhost:4567 from your machine, and you should see it return a test message ("OK. The server is running and ready to take requests.").
+To make sure it's running, browse to localhost:5300 from your machine, and you should see it return a test message ("OK. The server is running and ready to take requests.").
 
 #### Queue Consumers
 
@@ -39,7 +39,7 @@ You can invoke `resque-web` to inspect the queue of audio to be played, check fo
 Your machine has to be visible to other machines on a network to enqueue selections from them.
 
 #### Search Page
-From a browser, make a request to *your-ip*:4567/search
+From a browser, make a request to *your-ip*:5300/search
 
 Enter a search term to find a youtube video to play and submit the form.
 
@@ -48,6 +48,6 @@ The result should be a list of matches for your search term. Click `Enqueue` nex
 The YouTube video will be downloaded, ripped to MP3, and played on the system audio output of the host machine running the YTQ server.
 
 #### REST Interface
-From a browser, or with curl on the command line, make a request to *your-ip*:4567/play/*youtube_id* - where *youtube_id* is the part of a youtube video URL after the `?v=` parameter, e.g.: http://www.youtube.com/watch?v=asdf - "asdf" is the youtube_id.
+From a browser, or with curl on the command line, make a request to *your-ip*:5300/play/*youtube_id* - where *youtube_id* is the part of a youtube video URL after the `?v=` parameter, e.g.: http://www.youtube.com/watch?v=asdf - "asdf" is the youtube_id.
 
 In a multi-user scenario, if you want to identify the person who has made a selection, add the `?who=name` parameter to the end of the request URL and the system will announce the given name before playing it.
