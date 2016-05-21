@@ -17,6 +17,7 @@ end
 
 get '/play/:yt_id' do
   Resque.enqueue(AudioExtractJob, params[:yt_id], params[:who])
+  header + 
   "Received and enqueued your selection: #{params[:yt_id]}<br>" +
   "<form action='/search'><input name='q'><input type='submit'></form><br>"
 end
@@ -32,7 +33,7 @@ get '/search' do
       response_text += "<img width='50' src='#{result_record["thumbnail"]}'>#{result_record["fulltitle"]} <a href='/play/#{result_record["id"]}'>Enqueue</a><br>"
     end
   end
-  response_text
+  header + response_text
 end
 
 get '/api/search' do
@@ -46,6 +47,9 @@ get '/queue' do
 end
 
 def queue
+  # (0...Resque.size('extract')).map do |i|
+  #   Resque.peek('extract', i)['args']
+  # end +
   (0...Resque.size('playlist')).map do |i|
     Resque.peek('playlist', i)['args']
   end
