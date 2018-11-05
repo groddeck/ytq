@@ -9,6 +9,7 @@ GEM
     rack (1.5.2)
     rack-protection (1.5.3)
       rack
+    rake (12.3.1)
     redis (3.1.0)
     redis-namespace (1.5.1)
       redis (~> 3.0, >= 3.0.4)
@@ -45,10 +46,11 @@ PLATFORMS
 
 DEPENDENCIES
   foreman
+  rake
   redis
   resque
   rspec
   sinatra
 
 BUNDLED WITH
-   1.11.2
+   1.17.1
