@@ -18,3 +18,4 @@ end
 group :test do
   gem 'rspec'
 end
+gem 'rake'
