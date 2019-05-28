@@ -64,6 +64,7 @@
                 <img data-id={this.state.tracks[i].id} width='50' src={this.state.tracks[i].thumbnail}/>
                 <span>{this.state.tracks[i].fulltitle}</span> 
                 <input data-id={this.state.tracks[i].id} 
+		  data-name={this.state.tracks[i].fulltitle}
                   data-img={this.state.tracks[i].thumbnail}
                   type="button" 
                   value="Add to queue" 
