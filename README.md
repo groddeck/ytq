@@ -24,7 +24,7 @@ From the cloned repo (`cd ytq`) first `bundle install` and then run `foreman sta
 
 This will start up your YouTube Queue Server on port 5300
 
-To make sure it's running, browse to localhost:5300 from your machine, and you should see it return a test message ("OK. The server is running and ready to take requests.").
+To make sure it's running, browse to localhost:5300 from your machine, and you should see the search form.
 
 #### Queue Consumers
 
