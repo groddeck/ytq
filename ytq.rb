@@ -2,21 +2,29 @@ require 'sinatra'
 require 'resque'
 require 'json'
 require 'excon'
+require 'redis'
 require_relative 'jobs/audio_extract_job'
 require_relative 'jobs/audio_play_job'
 
 class Search
   def self.searches
-    @searches ||= {}
+    @redis ||= Redis.new
   end
 
   def self.search(term)
-    results_json = if searches[term]
-      searches[term]
-    else
-      `youtube-dl ytsearch10:"#{term}" -s --dump-json`
+    puts "posting search message to remote q"
+    Excon.post('https://curlyq.herokuapp.com/messages', query: {message: {topic: 'search', body: {term: term} }.to_json} )
+    # results_json = if searches[term]
+    #   searches[term]
+    # else
+    #   # `youtube-dl ytsearch10:"#{term}" -s --dump-json`
+    # end
+    # searches[term] = results_json
+    until result = searches.get(term) do
+      puts "awaiting non-nil redis result for #{term}"
     end
-    searches[term] = results_json
+    puts "got result: #{result}"
+    result
   end
 end
 
@@ -30,9 +38,16 @@ get '/api/play/:yt_id' do
 end
 
 get '/api/search' do
+  puts "passing search param to search module: #{params[:q]}"
   results_json = Search.search(params[:q])
-  results = results_json.split("\n")
-  "[#{results.join(',')}]"
+  # results = results_json.split("\n")
+  # "[#{results.join(',')}]"
+end
+
+post '/api/search' do
+  term = params[:q]
+  results = params[:results]
+  searches[term] = results
 end
 
 def queue
