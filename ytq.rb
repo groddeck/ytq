@@ -34,11 +34,11 @@ get '/api/search' do
 end
 
 def queue
-  (0...Resque.size('extract')).map do |i|
-    Resque.peek('extract', i)['args']
-  end +
   (0...Resque.size('playlist')).map do |i|
     Resque.peek('playlist', i)['args']
+  end + 
+  (0...Resque.size('extract')).map do |i|
+    Resque.peek('extract', i)['args']
   end
 end
 
