@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'resque'
 require 'json'
+require 'excon'
 require_relative 'jobs/audio_extract_job'
 require_relative 'jobs/audio_play_job'
 
@@ -24,7 +25,8 @@ get '/' do
 end
 
 get '/api/play/:yt_id' do
-  Resque.enqueue(AudioExtractJob, params[:yt_id], params[:who], params[:name], params[:img])
+  # Resque.enqueue(AudioExtractJob, params[:yt_id], params[:who], params[:name], params[:img])
+  Excon.post('https://curlyq.herokuapp.com/messages', query: {message: {topic: 'extract', body: {id: params[:yt_id], fulltitle: params[:name], img: params[:img]} }.to_json} )
 end
 
 get '/api/search' do
