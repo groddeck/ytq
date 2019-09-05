@@ -8,7 +8,7 @@ require_relative 'jobs/audio_play_job'
 
 class Search
   def self.searches
-    @redis ||= Redis.new
+    @search ||= {}
   end
 
   def self.search(term)
@@ -20,7 +20,7 @@ class Search
     #   # `youtube-dl ytsearch10:"#{term}" -s --dump-json`
     # end
     # searches[term] = results_json
-    until result = searches.get(term) do
+    until result = searches[term] do
       puts "awaiting non-nil redis result for #{term}"
     end
     puts "got result: #{result}"
