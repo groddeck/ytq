@@ -22,6 +22,8 @@ class Search
     # searches[term] = results_json
     until result = searches[term] do
       puts "awaiting non-nil redis result for #{term}"
+      puts searches.keys
+      sleep 1
     end
     puts "got result: #{result}"
     result
@@ -45,8 +47,11 @@ get '/api/search' do
 end
 
 post '/api/search' do
+  puts "got post of search results"
   term = params[:q]
   results = params[:results]
+  puts "got term: #{term}"
+  pp results
   Search.searches[term] = results
 end
 
