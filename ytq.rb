@@ -8,7 +8,7 @@ require_relative 'jobs/audio_play_job'
 
 class Search
   def self.searches
-    @search ||= {}
+    @searches ||= {}
   end
 
   def self.search(term)
@@ -47,7 +47,7 @@ end
 post '/api/search' do
   term = params[:q]
   results = params[:results]
-  searches[term] = results
+  Search.searches[term] = results
 end
 
 def queue
