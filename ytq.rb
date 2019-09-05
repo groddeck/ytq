@@ -30,6 +30,16 @@ class Search
   end
 end
 
+class Playlist
+  def self.nowplaying
+    @nowplaying ||= []
+  end
+
+  def self.nowplaying=(np)
+    @nowplaying = np
+  end
+end
+
 get '/' do
   send_file File.expand_path('index.html', settings.public_folder)
 end
@@ -55,17 +65,33 @@ post '/api/search' do
   Search.searches[term] = results
 end
 
+post '/api/nowplaying' do
+  puts "got nowplaying call with: #{params}"
+  payload = [{fulltitle: params[:fulltitle], id: params[:id], img: params[:img]}]
+  puts "payload is: #{payload}"
+  Playlist.nowplaying = payload
+  'ok'
+end
+
 def queue
-  (0...Resque.size('playlist')).map do |i|
-    Resque.peek('playlist', i)['args']
-  end + 
-  (0...Resque.size('extract')).map do |i|
-    Resque.peek('extract', i)['args']
+  # (0...Resque.size('playlist')).map do |i|
+  #   Resque.peek('playlist', i)['args']
+  # end +
+  # (0...Resque.size('extract')).map do |i|
+  #   Resque.peek('extract', i)['args']
+  # end
+  res = Excon.get('https://curlyq.herokuapp.com/messages.json')
+  if res && res.body
+    msg = JSON.parse(res.body)
+    msg.select{ |track| track['topic'] == 'extract' }.map{ |track| track['body'] }.map{ |track| track.slice('fulltitle', 'id', 'img') }
+  else
+    []
   end
 end
 
 get '/api/queue' do
-  queue.map{|track| {fulltitle: track[2], id: track[0], img: track[3]}}.to_json
+  # queue #.map{|track| {fulltitle: track[2], id: track[0], img: track[3]}}.to_json
+  Playlist.nowplaying.to_json
 end
 
 get '/tracks/:yt_id/remove' do
