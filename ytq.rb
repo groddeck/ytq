@@ -31,6 +31,10 @@ class Search
 end
 
 class Playlist
+  def self.playlist
+    @playlist ||= []
+  end
+
   def self.nowplaying
     @nowplaying ||= []
   end
@@ -73,6 +77,12 @@ post '/api/nowplaying' do
   'ok'
 end
 
+post '/api/playlist' do
+  payload = {fulltitle: params[:fulltitle], id: params[:id], img: params[:img]}
+  Playlist.playlist << payload
+  'ok'
+end
+
 def queue
   # (0...Resque.size('playlist')).map do |i|
   #   Resque.peek('playlist', i)['args']
@@ -91,7 +101,7 @@ end
 
 get '/api/queue' do
   # queue #.map{|track| {fulltitle: track[2], id: track[0], img: track[3]}}.to_json
-  Playlist.nowplaying.to_json
+  (Playlist.nowplaying + Playlist.playlist).to_json
 end
 
 get '/tracks/:yt_id/remove' do
