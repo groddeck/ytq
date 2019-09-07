@@ -106,13 +106,15 @@ get '/api/queue' do
 end
 
 get '/tracks/:yt_id/remove' do
-  track = queue.select { |track|
-    track[0] == params[:yt_id]
-  }.first
-  result = Resque.dequeue(AudioPlayJob, *track)
-  if result == 1
-    "Removed track: #{track} from playback queue"
-  else
-    "Unable to remove track: #{track}"
-  end
+  # track = queue.select { |track|
+  #   track[0] == params[:yt_id]
+  # }.first
+  # result = Resque.dequeue(AudioPlayJob, *track)
+  # if result == 1
+  #   "Removed track: #{track} from playback queue"
+  # else
+  #   "Unable to remove track: #{track}"
+  # end
+  Excon.post('https://curlyq.herokuapp.com/messages', query: {message: {topic: 'remove', body: {id: params[:yt_id]} }.to_json} )
+  'ok'
 end
