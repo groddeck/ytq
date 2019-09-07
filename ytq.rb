@@ -40,6 +40,7 @@ class Playlist
   end
 
   def self.nowplaying=(np)
+    @playlist.shift
     @nowplaying = np
   end
 end
