@@ -1,0 +1,33 @@
+require 'resque'
+require 'json'
+require 'excon'
+require_relative 'jobs/audio_extract_job'
+require_relative 'jobs/audio_play_job'
+require_relative 'jobs/search_job'
+
+class Queue
+  def self.queue
+    queue = (0...Resque.size('playlist')).map do |i|
+      Resque.peek('playlist', i)['args']
+    end
+  end
+end
+
+QUEUE_HOST = ENV['QUEUE_HOST'] || 'https://curlyq.herokuapp.com'
+
+while true do
+  # Extract
+  begin
+    res = Excon.post("#{QUEUE_HOST}/begin.json", query: {topic: 'extract'} )
+    pp res.body
+    if res.body && !res.body.empty?
+      js = JSON.parse(res.body)
+      msg = js['body']
+      Resque.enqueue(AudioExtractJob, msg['id'], nil, msg['fulltitle'], msg['img'])
+    end
+  rescue
+    puts 'an error occurred queueing audio download'
+  end
+
+  sleep 2
+end
