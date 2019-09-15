@@ -4,6 +4,7 @@ require 'json'
 
 class SearchJob
   @queue = :search
+  APP_HOST = ENV['APP_HOST'] || 'http://barchord.app'
 
   def self.perform(term)
     puts "got search term request: #{term}"
@@ -15,16 +16,6 @@ class SearchJob
       n.slice('id', 'fulltitle', 'thumbnail')
     end
     pp results
-    # redis = Redis.new
-    # redis.set(term, results)
-    Excon.post('http://3.228.94.216/api/search', query: {q: term, results:  results.to_json})
-
-    # puts "cool, cool, you want to play #{youtube_id}"
-    # puts `youtube-dl -x --id --audio-format 'mp3' --download-archive ytdl.arch -- '#{youtube_id}'`
-    # name ||= `youtube-dl -e #{youtube_id}`
-    # unless $?.success?
-    # end
-    #
-    # Resque.enqueue(AudioPlayJob, youtube_id, who, name, img)
+    Excon.post("#{APP_HOST}/api/search", query: {q: term, results:  results.to_json})
   end
 end
