@@ -8,6 +8,7 @@ if major < 1 ||
 end
 
 gem 'sinatra'
+gem 'sinatra-contrib'
 gem 'redis'
 gem 'resque'
 

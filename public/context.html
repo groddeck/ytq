@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Music Queue</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <style>
+      img.loading {
+          left: 0px;
+          top: 0px;
+          width: 100%;
+          height: 100%;
+          z-index: 100;
+      }
+      div {
+        margin: 5px;
+      }
+      div.title {
+        width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis; // This is where the magic happens
+      }
+      ol {
+        list-style: 'none';
+      }
+    </style>
+  </head>
+  <body>
+    <div id="search-div"></div>
+
+    <script src="https://fb.me/react-15.0.0.js"></script>
+    <script src="https://fb.me/react-dom-15.0.0.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/babel">
+      var Search = React.createClass({
+        getInitialState: function() {
+          return { tracks: [], isLoading: false, view: 'search', queue: [] };
+        },
+        onClick: function(event) {
+          this.setState({isLoading: true, view: 'search'});
+          // event.preventDefault();
+          $.get('/', {context: $('#context').val()}, this.success, 'json');
+        },
+        success: function(data) {
+          var results = [];
+          for(var i in data) {
+            results.push({fulltitle: data[i].fulltitle, thumbnail: data[i].thumbnail, id: data[i].id});
+          }
+          this.setState({ tracks: results, isLoading: false });
+        },
+        enqueue: function(event) {
+          $.get('/api/play/' + event.target.dataset.id + '?img=' + event.target.dataset.img + '&name=' + event.target.dataset.name, null, this.enqueueSuccess);
+        },
+        enqueueSuccess: function() {
+          this.setState({view: 'confirm'});
+        },
+        queue: function() {
+          $.get('/api/queue', null, this.queueSuccess, 'json');
+        },
+        queueSuccess: function(data) {
+          this.setState({view: 'queue', queue: data});
+        },
+        dequeue: function(event) {
+          $.get('/tracks/' + event.target.dataset.id + '/remove', null, this.dequeueSuccess);
+        },
+        dequeueSuccess: function(event) {
+          this.queue();
+        },
+        render: function() {
+          let resultsView;
+          let searchResults = [];
+          for(var i in this.state.tracks) {
+            searchResults.push(
+              <li key={i}><table><tbody>
+                <tr>
+                  <td>
+                    <div><img data-id={this.state.tracks[i].id} width='50' src={this.state.tracks[i].thumbnail}/></div>
+                  </td>
+                  <td>
+                    <div className="title"><span>{this.state.tracks[i].fulltitle}</span></div>
+                  </td>
+                  <td>
+                    <div><input data-id={this.state.tracks[i].id} 
+                  data-img={this.state.tracks[i].thumbnail}
+                  data-name={this.state.tracks[i].fulltitle}
+                  type="button" 
+                  value="Add to queue" 
+                  className="btn btn-primary"
+                  onClick={this.enqueue}/></div>
+                  </td>
+                </tr>
+              </tbody></table></li>
+            );
+          }
+          let centered=true;
+          let loadingGif;
+          if (this.state.isLoading) {
+            loadingGif = (
+              <img
+                src="/loading.svg"
+                responsive
+                className="loading centered"
+              />
+            );
+          }
+          if (this.state.view === 'search') {
+            resultsView = 
+              <div>
+                Search Results
+                {loadingGif}
+                <ul style={{listStyle: 'none', paddingInlineStart: 0}}>
+                  {searchResults}
+                </ul>
+              </div>;
+          } else if (this.state.view === 'confirm'){
+            resultsView = 
+              <div>Queued</div>;
+          } else {
+            let queueResults = [];
+            for(var i in this.state.queue) {
+              queueResults.push(
+                <li key={i}><table><tbody>
+                  <tr>
+                    <td>
+                      <div><img width='50' src={this.state.queue[i].img}/></div>
+                    </td>
+                    <td>
+                      <div><span>{this.state.queue[i].fulltitle}</span></div>
+                    </td>
+                    <td>
+                      <div><input data-id={this.state.queue[i].id} type="button" value="Remove" onClick={this.dequeue}/></div>
+                    </td>
+                  </tr>
+                </tbody></table></li>
+              );
+            }
+            resultsView = 
+              <div>
+                Search Results
+                {loadingGif}
+                <ul style={{listStyle: 'none', paddingInlineStart: 0}}>
+                  {queueResults}
+                </ul>
+              </div>;
+          }
+
+          return (
+            <div>
+              <div>Welcome to Barchord</div>
+              <div>
+                <label for="query">Enter Venue Code</label>
+                <form onSubmit={this.onClick}>
+                  <input id="context" name="context" type="text" className="form-control" style={{width: '50%'}}/>
+                </form>
+                <input type="button" className="btn btn-primary" value="Search" onClick={this.onClick}/>
+                <input type="button" className="btn" value="Queue" onClick={this.queue}/>
+              </div>
+              {resultsView}
+            </div>
+          )
+        }
+      });
+
+      ReactDOM.render(
+        <Search />,
+        $('#search-div')[0]
+      );
+    </script>
+  </body>
+</html>

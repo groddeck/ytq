@@ -14,12 +14,13 @@ class Queue
 end
 
 QUEUE_HOST = ENV['QUEUE_HOST'] || 'https://curlyq.herokuapp.com'
+CONTEXT = ENV['CONTEXT'] || 'default'
 
 while true do
 
   # Remove
   begin
-    res = Excon.post("#{QUEUE_HOST}/begin.json", query: {topic: 'remove'} )
+    res = Excon.post("#{QUEUE_HOST}/begin.json", query: {context: COONTEXT, topic: 'remove'} )
     pp res.body
     if res.body && !res.body.empty?
       js = JSON.parse(res.body)
