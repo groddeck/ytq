@@ -6,6 +6,7 @@ require 'redis'
 require_relative 'jobs/audio_extract_job'
 require_relative 'jobs/audio_play_job'
 require 'sinatra/cookies'
+require 'google/apis/youtube_v3'
 
 QUEUE_HOST = ENV['QUEUE_HOST'] || 'https://curlyq.herokuapp.com'
 
@@ -16,15 +17,25 @@ class Search
 
   def self.search(term, context)
     puts "posting search message to remote q"
-    Excon.post("#{QUEUE_HOST}/messages", query: {message: {context: context, topic: 'search', body: {term: term} }.to_json} )
-
-    until result = searches[term] do
-      puts "awaiting non-nil redis result for #{term}"
-      puts searches.keys
-      sleep 1
+    qh = ENV['QUEUE_HOST'] || 'https://curlyq.herokuapp.com'
+    key = ENV['YT_KEY']
+    url = "#{qh}/messages"
+    puts url
+    # Excon.post("#{url}", query: {message: {context: context, topic: 'search', body: {term: term} }.to_json} )
+    #
+    # until result = searches[term] do
+    #   puts "awaiting non-nil redis result for #{term}"
+    #   puts searches.keys
+    #   sleep 1
+    # end
+    client = Google::Apis::YoutubeV3::YouTubeService.new
+    client.key = key
+    api_res = client.list_searches('snippet', q: term, max_results: 10, type: 'video')
+    result = api_res.items.map do |item|
+      {id: item.id.video_id, fulltitle: item.snippet.title, thumbnail: item.snippet.thumbnails.default.url}
     end
     puts "got result: #{result}"
-    result
+    result.to_json
   end
 end
 
@@ -71,7 +82,7 @@ post '/api/search' do
   term = params[:q]
   results = params[:results]
   puts "got term: #{term}"
-  pp results
+  p results
   Search.searches[term] = results
 end
 

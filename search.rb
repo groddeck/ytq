@@ -22,7 +22,7 @@ while true do
   begin
     puts "loop to fetch search message from remote q"
     res = Excon.post("#{QUEUE_HOST}/begin.json", query: {context: CONTEXT, topic: 'search'} )
-    pp res.body
+    p res.body
     if res.body && !res.body.empty?
       puts 'got search message'
       js = JSON.parse(res.body)

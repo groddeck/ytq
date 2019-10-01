@@ -21,3 +21,4 @@ group :test do
 end
 gem 'rake'
 gem 'excon'
+gem 'google-api-client'

@@ -20,14 +20,15 @@ while true do
   # Extract
   begin
     res = Excon.post("#{QUEUE_HOST}/begin.json", query: {context: CONTEXT, topic: 'extract'} )
-    pp res.body
+    p res.body
     if res.body && !res.body.empty?
       js = JSON.parse(res.body)
       msg = js['body']
       Resque.enqueue(AudioExtractJob, msg['id'], nil, msg['fulltitle'], msg['img'])
     end
-  rescue
-    puts 'an error occurred queueing audio download'
+  rescue => e
+    puts 'an error occurred queueing audio download:'
+    puts e
   end
 
   sleep 2
