@@ -54,6 +54,14 @@ class Playlist
   end
 end
 
+get '/api/skip' do
+  `pkill -f mplayer`
+end
+
+get '/admin' do
+  send_file File.expand_path('admin.html', settings.public_folder)
+end
+
 get '/' do
   context = params[:context] || cookies[:context]
   if context == nil

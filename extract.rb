@@ -24,7 +24,14 @@ while true do
     if res.body && !res.body.empty?
       js = JSON.parse(res.body)
       msg = js['body']
-      Resque.enqueue(AudioExtractJob, msg['id'], nil, msg['fulltitle'], msg['img'])
+      id = msg['id']
+      fulltitle = msg['fulltitle']
+      img = msg['img']
+      `touch db.txt`
+      File.open('db.txt', 'w+') do |f|
+        f.puts( {id: id, fulltitle: fulltitle, img: img}.to_json )
+      end
+      Resque.enqueue(AudioExtractJob, id, nil, fulltitle, img)
     end
   rescue => e
     puts 'an error occurred queueing audio download:'

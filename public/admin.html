@@ -41,7 +41,7 @@
         onClick: function(event) {
           this.setState({isLoading: true, view: 'search'});
           // event.preventDefault();
-          $.get('/', {context: $('#context').val()}, this.success, 'json');
+          $.get('/api/skip', {context: $('#context').val()}, this.success, 'json');
         },
         success: function(data) {
           var results = [];
@@ -150,11 +150,10 @@
             <div>
               <div>Welcome to Barchord</div>
               <div>
-                <label for="query">Enter Venue Code</label>
+                <label for="query">Skip current track</label>
                 <form onSubmit={this.onClick}>
-                  <input id="context" name="context" type="text" className="form-control" style={{width: '50%'}}/>
                 </form>
-                <input type="button" className="btn btn-primary" value="Submit" onClick={this.onClick}/>
+                <input type="button" className="btn btn-primary" value="Skip" onClick={this.onClick}/>
               </div>
             </div>
           )

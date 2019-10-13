@@ -8,6 +8,11 @@ class AudioPlayJob
   def self.perform(youtube_id, who=nil, name, img)
     begin
       Excon.post("#{APP_HOST}/api/nowplaying", query: {context: CONTEXT, fulltitle: name, id: youtube_id, img: img})
+
+      # Excon.post("#{APP_HOST}/api/search",
+      #   body: URI.encode_www_form(context: CONTEXT, q: term, results:  results.to_json)
+      # )
+
     rescue
       puts "error setting now-playing"
     end

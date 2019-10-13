@@ -20,8 +20,8 @@ while true do
 
   # Remove
   begin
-    res = Excon.post("#{QUEUE_HOST}/begin.json", query: {context: COONTEXT, topic: 'remove'} )
-    pp res.body
+    res = Excon.post("#{QUEUE_HOST}/begin.json", query: {context: CONTEXT, topic: 'remove'} )
+    p res.body
     if res.body && !res.body.empty?
       js = JSON.parse(res.body)
       msg = js['body']
@@ -32,14 +32,15 @@ while true do
         track[0] == ytid
       }.first
       result = Resque.dequeue(AudioPlayJob, *track)
-      if result == 1
-        "Removed track: #{track} from playback queue"
+      puts ">>> got result from de-q: #{result}"
+      if result >= 1
+        "Removed #{result} track/s matching: #{track} from playback queue"
       else
         "Unable to remove track: #{track}"
       end
     end
-  rescue
-    puts 'an error occurred removing'
+  rescue => e
+    puts "an error occurred removing #{e}"
   end
 
   sleep 2

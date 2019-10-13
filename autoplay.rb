@@ -31,7 +31,17 @@ while true do
       puts "track: #{track}"
       track_id = track.split('.')[1].split('/')[1]
       puts "track_id: #{track_id}"
-      Resque.enqueue(AudioPlayJob, track_id, nil, nil, nil)
+      track = nil
+      `touch db.txt`
+      File.open("db.txt", "r").each_line do |line|
+        record = JSON.parse(line)
+        if record['id'] == track_id
+          track = record
+          break
+        end
+      end
+      next unless track
+      Resque.enqueue(AudioPlayJob, track['id'], nil, track['fulltitle'], track['img'])
     end
   rescue => error
     puts 'an error occurred attempting random autoplay:'
