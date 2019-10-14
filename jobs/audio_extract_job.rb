@@ -13,6 +13,6 @@ class AudioExtractJob
     unless $?.success?
     end
 
-    Resque.enqueue(AudioPlayJob, youtube_id, who, name, img)
+    Resque.enqueue(AudioPlayJob, youtube_id, Time.now.to_i, name, img)
   end
 end
