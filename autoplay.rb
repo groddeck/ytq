@@ -40,8 +40,9 @@ while true do
           break
         end
       end
-      next unless track
-      Resque.enqueue(AudioPlayJob, track['id'], nil, track['fulltitle'], track['img'])
+      if track
+        Resque.enqueue(AudioPlayJob, track['id'], nil, track['fulltitle'], track['img'])
+      end
     end
   rescue => error
     puts 'an error occurred attempting random autoplay:'
