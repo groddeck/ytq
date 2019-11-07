@@ -14,6 +14,8 @@ class Queue
 end
 
 QUEUE_HOST = ENV['QUEUE_HOST'] || 'https://curlyq.herokuapp.com'
+CONTEXT = ENV['CONTEXT'] || 'default'
+APP_HOST = ENV['APP_HOST'] || 'http://barchord.app'
 
 while true do
 
@@ -41,7 +43,10 @@ while true do
         end
       end
       if track
-        Resque.enqueue(AudioPlayJob, track['id'], nil, track['fulltitle'], track['img'])
+        Excon.post("#{APP_HOST}/api/playlist", query: {
+          context: CONTEXT, fulltitle: track['fulltitle'], id: track['id'], img: track['img']
+        })
+        Resque.enqueue(AudioPlayJob, track['id'], Time.now.to_i, track['fulltitle'], track['img'])
       end
     end
   rescue => error
