@@ -28,7 +28,7 @@ while true do
       fulltitle = msg['fulltitle']
       img = msg['img']
       `touch db.txt`
-      File.open('db.txt', 'w+') do |f|
+      File.open('db.txt', 'a') do |f|
         f.puts( {id: id, fulltitle: fulltitle, img: img}.to_json )
       end
       Resque.enqueue(AudioExtractJob, id, nil, fulltitle, img)
